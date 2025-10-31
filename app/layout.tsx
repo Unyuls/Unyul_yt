@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Nabla, Poppins, Righteous } from "next/font/google";
 import "./globals.css";
+import AOSInit from "./components/aos-init";
 
 const nabla = Nabla({
   variable: "--font-nabla",
@@ -34,6 +35,7 @@ export default function RootLayout({
       <body
         className={`${poppins.variable} ${nabla.variable} ${righteous.variable} antialiased`}
       >
+        <AOSInit />
         {children}
       </body>
     </html>

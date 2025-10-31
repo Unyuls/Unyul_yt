@@ -13,7 +13,11 @@ export default function Gallery() {
   const duplicated = [...images, ...images];
 
   return (
-    <section className="w-full bg-gradient-to-b from-black via-gray-900 to-black text-white py-24 relative z-10 flex flex-col items-center">
+    <section
+      id="gallery"
+      className="w-full bg-gradient-to-b from-black via-gray-900 to-black text-white py-24 relative z-10 flex flex-col items-center"
+      data-aos="fade-up"
+    >
       <h2 className="scroll-mt-16 text-3xl sm:text-4xl lg:text-5xl font-righteous font-bold mb-12 leading-tight sm:leading-tight text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-300">
         Galeri Unyul
       </h2>

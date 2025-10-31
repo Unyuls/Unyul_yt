@@ -257,10 +257,9 @@ export default function Find() {
 
               {hovered === icon.id && (
                 <>
-                  {/* floating card (fixed) — position computed so it never leaves viewport */}
                   <div
                     ref={cardRef}
-                    className="fixed w-[14rem] sm:w-[32rem] max-w-[90vw] border border-white/10 backdrop-blur-sm rounded-xl p-3 sm:p-5 shadow-2xl text-left text-white flex items-center justify-between gap-4 sm:gap-6 transition duration-200 ease-out"
+                    className="fixed w-[10rem] sm:w-[20rem] max-w-[90vw] border border-white/10 backdrop-blur-sm rounded-xl p-3 sm:p-5 shadow-2xl text-left text-white flex items-center justify-between gap-4 sm:gap-6 transition duration-200 ease-out"
                     style={{
                       background: cardBgMap[icon.id] ?? undefined,
                       borderColor: "rgba(255,255,255,0.06)",

@@ -68,26 +68,26 @@ const Navbar = () => {
         <div className="hidden md:flex items-center justify-end h-16">
           <div className="flex space-x-8">
             <Link
-              href="/"
-              className="text-white hover:text-gray-300 px-3 py-2 text-sm font-medium transition-colors duration-200"
+              href="#hero"
+              className="text-white hover:text-gray-300 hover:bg-white/10 active:bg-white/20 px-3 py-2 text-sm font-medium transition-all duration-200 rounded-full"
             >
               Beranda
             </Link>
             <Link
-              href="/tentang-unyul"
-              className="text-white hover:text-gray-300 px-3 py-2 text-sm font-medium transition-colors duration-200"
+              href="#about"
+              className="text-white hover:text-gray-300 hover:bg-white/10 active:bg-white/20 px-3 py-2 text-sm font-medium transition-all duration-200 rounded-full"
             >
               Tentang Unyul
             </Link>
             <Link
-              href="/fan-art"
-              className="text-white hover:text-gray-300 px-3 py-2 text-sm font-medium transition-colors duration-200"
+              href="#gallery"
+              className="text-white hover:text-gray-300 hover:bg-white/10 active:bg-white/20 px-3 py-2 text-sm font-medium transition-all duration-200 rounded-full"
             >
               Galeri Unyul
             </Link>
             <Link
-              href="/temukan-unyul"
-              className="text-white hover:text-gray-300 px-3 py-2 text-sm font-medium transition-colors duration-200"
+              href="#find"
+              className="text-white hover:text-gray-300 hover:bg-white/10 active:bg-white/20 px-3 py-2 text-sm font-medium transition-all duration-200 rounded-full"
             >
               Temukan Unyul
             </Link>
@@ -128,8 +128,8 @@ const Navbar = () => {
               <X className="h-7 w-7" />
             </button>
             <Link
-              href="/"
-              className="text-white hover:text-gray-300 block px-3 py-2 text-base font-medium"
+              href="#hero"
+              className="text-white hover:text-gray-300 hover:bg-white/10 active:bg-white/20 block px-3 py-2 text-base font-medium transition-all duration-200 rounded-lg"
               onClick={() => {
                 setIsClosing(true);
                 setTimeout(() => {
@@ -141,8 +141,8 @@ const Navbar = () => {
               Beranda
             </Link>
             <Link
-              href="/tentang-unyul"
-              className="text-white hover:text-gray-300 block px-3 py-2 text-base font-medium"
+              href="#about"
+              className="text-white hover:text-gray-300 hover:bg-white/10 active:bg-white/20 block px-3 py-2 text-base font-medium transition-all duration-200 rounded-lg"
               onClick={() => {
                 setIsClosing(true);
                 setTimeout(() => {
@@ -154,8 +154,8 @@ const Navbar = () => {
               Tentang Unyul
             </Link>
             <Link
-              href="/fan-art"
-              className="text-white hover:text-gray-300 block px-3 py-2 text-base font-medium"
+              href="#gallery"
+              className="text-white hover:text-gray-300 hover:bg-white/10 active:bg-white/20 block px-3 py-2 text-base font-medium transition-all duration-200 rounded-lg"
               onClick={() => {
                 setIsClosing(true);
                 setTimeout(() => {
@@ -167,8 +167,8 @@ const Navbar = () => {
               Galeri Unyul
             </Link>
             <Link
-              href="/temukan-unyul"
-              className="text-white hover:text-gray-300 block px-3 py-2 text-base font-medium"
+              href="#find"
+              className="text-white hover:text-gray-300 hover:bg-white/10 active:bg-white/20 block px-3 py-2 text-base font-medium transition-all duration-200 rounded-lg"
               onClick={() => {
                 setIsClosing(true);
                 setTimeout(() => {

@@ -12,8 +12,8 @@ body {
   margin: 0;
   background: var(--background);
   color: white;
-  /* Prevent anchored/scroll-to content from being hidden behind the sticky navbar (h-16 = 4rem) */
   scroll-padding-top: 4rem;
+  scroll-behavior: smooth;
 }
 
 /* Nabla font */
@@ -32,4 +32,14 @@ body {
 .font-righteous {
   font-family: var(--font-righteous), ui-sans-serif, system-ui, -apple-system,
     "Segoe UI", Roboto, "Helvetica Neue", Arial;
+}
+
+/* Hide scrollbar */
+::-webkit-scrollbar {
+  display: none;
+}
+
+html {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }

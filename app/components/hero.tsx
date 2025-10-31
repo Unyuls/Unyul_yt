@@ -5,7 +5,11 @@ import Image from "next/image";
 
 const Hero = () => {
   return (
-    <section className="relative bg-black sm:bg-gradient-to-b sm:from-black sm:via-gray-900 sm:to-black text-white min-h-screen w-full overflow-hidden -mt-16">
+    <section
+      id="hero"
+      className="relative bg-black sm:bg-gradient-to-b sm:from-black sm:via-gray-900 sm:to-black text-white min-h-screen w-full overflow-hidden -mt-16"
+      data-aos="fade-up"
+    >
       {/* Left artwork */}
       <div className="absolute inset-0 flex">
         <div className="relative w-1/2 h-full hidden sm:block">
