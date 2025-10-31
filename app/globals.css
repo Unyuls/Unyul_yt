@@ -1,26 +1,35 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #000000;
+  --foreground: #f6edbd;
+  --secondary: #171818;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+html,
 body {
+  height: 100%;
+  margin: 0;
   background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  color: white;
+  /* Prevent anchored/scroll-to content from being hidden behind the sticky navbar (h-16 = 4rem) */
+  scroll-padding-top: 4rem;
+}
+
+/* Nabla font */
+.font-nabla {
+  font-family: var(--font-nabla), ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, "Helvetica Neue", Arial;
+}
+
+/* Poppins font */
+.font-poppins {
+  font-family: var(--font-poppins), ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, "Helvetica Neue", Arial;
+}
+
+/* Righteous font */
+.font-righteous {
+  font-family: var(--font-righteous), ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, "Helvetica Neue", Arial;
 }
