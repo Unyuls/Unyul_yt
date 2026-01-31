@@ -1,8 +1,7 @@
 "use client";
 
-"use client";
-
 import React, { useState } from "react";
+import * as motion from "motion/react-client";
 import { Music, Gamepad2, Youtube } from "lucide-react";
 
 const About: React.FC = () => {
@@ -10,18 +9,30 @@ const About: React.FC = () => {
   return (
     <section
       id="about"
-      className="w-full bg-gradient-to-b from-black via-gray-900 to-black text-white py-24 relative z-10"
+      className="w-full py-24 z-10 bg-gradient-to-b from-transparent via-black/60 to-black/80"
     >
       <div className="max-w-5xl mx-auto px-6">
         {/* add scroll margin and a little more leading so glyphs aren't visually clipped */}
-        <h2 className="scroll-mt-16 text-3xl sm:text-4xl lg:text-5xl font-righteous font-bold mb-8 leading-tight sm:leading-tight text-center text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-300">
+        <motion.h2
+          className="scroll-mt-16 text-3xl sm:text-4xl lg:text-5xl font-righteous font-bold mb-8 leading-tight sm:leading-tight text-center text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-300"
+          initial={{ opacity: 0, y: -20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+        >
           Tentang Unyul
-        </h2>
+        </motion.h2>
 
         {/* Two-column: video (left) + text (right). Stacks on small screens */}
         <div className="flex flex-col md:flex-row items-start gap-8">
           {/* Video column */}
-          <div className="w-full md:w-1/2" data-aos="fade-left">
+          <motion.div
+            className="w-full md:w-1/2"
+            initial={{ opacity: 0, x: -50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
             <div className="w-full h-0 pb-[56.25%] relative rounded-lg overflow-hidden shadow-lg">
               <iframe
                 title="Unyul video"
@@ -31,10 +42,16 @@ const About: React.FC = () => {
                 allowFullScreen
               ></iframe>
             </div>
-          </div>
+          </motion.div>
 
           {/* Text column */}
-          <div className="w-full md:w-1/2 text-left" data-aos="fade-right">
+          <motion.div
+            className="w-full md:w-1/2 text-left"
+            initial={{ opacity: 0, x: 50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
             <div className="space-y-6">
               <p className="text-neutral-300 leading-relaxed text-lg sm:text-xl font-light">
                 Halo para Warga Desa Karbit! Perkenalkan aku Unyul, seorang
@@ -47,13 +64,16 @@ const About: React.FC = () => {
                 Konten seru dan menarik? Iya.
               </p>
             </div>
-          </div>
+          </motion.div>
         </div>
 
         {/* Icons row (preserve original interactions) */}
-        <div
+        <motion.div
           className="mt-12 flex items-center justify-center gap-10"
-          data-aos="fade-up"
+          initial={{ opacity: 0, y: 50 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
         >
           <div className="relative">
             <div
@@ -61,8 +81,8 @@ const About: React.FC = () => {
                 hoveredIcon === "music"
                   ? "scale-110 bg-white/10 border-white/60"
                   : hoveredIcon
-                  ? "scale-75"
-                  : "scale-100"
+                    ? "scale-75"
+                    : "scale-100"
               }`}
               onMouseEnter={() => setHoveredIcon("music")}
               onMouseLeave={() => setHoveredIcon(null)}
@@ -83,8 +103,8 @@ const About: React.FC = () => {
                 hoveredIcon === "gamer"
                   ? "scale-110 bg-white/10 border-white/60"
                   : hoveredIcon
-                  ? "scale-75"
-                  : "scale-100"
+                    ? "scale-75"
+                    : "scale-100"
               }`}
               onMouseEnter={() => setHoveredIcon("gamer")}
               onMouseLeave={() => setHoveredIcon(null)}
@@ -105,8 +125,8 @@ const About: React.FC = () => {
                 hoveredIcon === "streamer"
                   ? "scale-110 bg-white/10 border-white/60"
                   : hoveredIcon
-                  ? "scale-75"
-                  : "scale-100"
+                    ? "scale-75"
+                    : "scale-100"
               }`}
               onMouseEnter={() => setHoveredIcon("streamer")}
               onMouseLeave={() => setHoveredIcon(null)}
@@ -120,7 +140,7 @@ const About: React.FC = () => {
               </div>
             )}
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

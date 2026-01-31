@@ -11,8 +11,19 @@ export default function Footer() {
       className="w-full text-center"
     >
       <div className="max-w-7xl mx-auto px-4 py-6">
-        <p className="text-white text-sm">
-          Copyright 2025 Unyul. All rights reserved.
+        <p>
+          &copy; {new Date().getFullYear()}{" "}
+          <span className="text-slate-300 font-semibold">Unyul</span>. Developed
+          by{" "}
+          <a
+            href="https://utaaa.my.id"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-slate-300 font-semibold hover:text-white transition-colors"
+          >
+            Utaaa
+          </a>
+          .
         </p>
       </div>
     </footer>
