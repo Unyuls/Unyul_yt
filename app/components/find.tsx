@@ -142,7 +142,6 @@ const socialLinks: SocialLink[] = [
   },
 ];
 
-// ... (existing imports and types)
 import * as motion from "motion/react-client";
 
 export default function Find() {
@@ -162,7 +161,10 @@ export default function Find() {
   };
 
   return (
-    <section className="w-full text-white py-24 bg-gradient-to-b from-blue-950/80 to-blue-900/90">
+    <section
+      id="find"
+      className="w-full text-white py-24 bg-gradient-to-b from-blue-950/80 to-blue-900/90"
+    >
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         <motion.div
           className="text-center mb-16"
@@ -196,22 +198,16 @@ export default function Find() {
               className="group relative flex items-center p-5 bg-neutral-900/40 backdrop-blur-md border border-neutral-800 rounded-2xl overflow-hidden hover:bg-neutral-800/60 hover:border-neutral-700 transition-all duration-300 transform hover:-translate-y-1"
               variants={item}
             >
-              {/* Gradient Shine Effect on Hover */}
               <div
                 className={`absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-500 bg-gradient-to-r ${link.gradient}`}
               />
-
-              {/* Leading Border Accent */}
               <div
                 className={`absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b ${link.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-300`}
               />
 
-              {/* Icon Container */}
               <div className="relative z-10 flex-shrink-0 w-14 h-14 flex items-center justify-center rounded-xl bg-neutral-950 border border-neutral-800 text-neutral-300 group-hover:scale-105 group-hover:text-white group-hover:border-neutral-700 transition-all duration-300 shadow-sm">
                 <div className="w-7 h-7">{link.icon}</div>
               </div>
-
-              {/* Content */}
               <div className="ml-5 flex-1 relative z-10">
                 <div className="flex items-center justify-between">
                   <h3 className="font-bold text-white text-lg leading-none group-hover:text-neutral-100 transition-colors">

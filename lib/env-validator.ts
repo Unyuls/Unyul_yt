@@ -1,22 +1,13 @@
-/**
- * ENVIRONMENT VALIDATOR
- * Memastikan environment variables penting tersedia dan aman
- */
-
 export interface EnvValidationResult {
   isValid: boolean;
   errors: string[];
   warnings: string[];
 }
 
-/**
- * Validate environment variables
- */
 export function validateEnvironment(): EnvValidationResult {
   const errors: string[] = [];
   const warnings: string[] = [];
 
-  // Required environment variables
   const required = ["YOUTUBE_API_KEY"];
 
   required.forEach((key) => {
@@ -25,14 +16,10 @@ export function validateEnvironment(): EnvValidationResult {
     }
   });
 
-  // Security checks
   if (process.env.NODE_ENV === "production") {
-    // In production, ensure HTTPS
     if (!process.env.NEXT_PUBLIC_SITE_URL?.startsWith("https://")) {
       warnings.push("Site URL should use HTTPS in production");
     }
-
-    // Check for development secrets in production
     if (
       process.env.YOUTUBE_API_KEY === "test" ||
       process.env.YOUTUBE_API_KEY === "development"
@@ -41,7 +28,6 @@ export function validateEnvironment(): EnvValidationResult {
     }
   }
 
-  // Check for exposed secrets
   const exposedPatterns = [
     {
       key: "NEXT_PUBLIC_",
@@ -67,9 +53,6 @@ export function validateEnvironment(): EnvValidationResult {
   };
 }
 
-/**
- * Get safe environment info (for logging)
- */
 export function getSafeEnvInfo() {
   return {
     nodeEnv: process.env.NODE_ENV,
@@ -79,23 +62,14 @@ export function getSafeEnvInfo() {
   };
 }
 
-/**
- * Check if running in production
- */
 export function isProduction(): boolean {
   return process.env.NODE_ENV === "production";
 }
 
-/**
- * Check if running in development
- */
 export function isDevelopment(): boolean {
   return process.env.NODE_ENV === "development";
 }
 
-/**
- * Validate and log environment on startup
- */
 export function validateAndLogEnvironment() {
   const validation = validateEnvironment();
   const safeInfo = getSafeEnvInfo();

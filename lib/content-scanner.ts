@@ -238,11 +238,24 @@ function checkPatterns(
       const matches = content.matchAll(pattern);
 
       for (const match of matches) {
+        const matchedString = match[0];
+
+        if (description.includes("Iframe") || description.includes("Embed")) {
+          if (
+            (matchedString.includes("youtube.com") ||
+              matchedString.includes("youtu.be") ||
+              matchedString.includes("youtube-nocookie.com")) &&
+            !matchedString.includes("javascript:")
+          ) {
+            continue;
+          }
+        }
+
         threats.push({
           type,
           severity: severity as Threat["severity"],
           pattern: description,
-          match: match[0],
+          match: matchedString,
           position: match.index,
         });
       }

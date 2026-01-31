@@ -1,39 +1,27 @@
-/**
- * SECURITY CONFIGURATION
- * Central configuration for all security settings
- */
-
 export const SECURITY_CONFIG = {
-  // ===== RATE LIMITING =====
   rateLimit: {
-    // General API rate limit
     api: {
-      windowMs: 60000, // 1 minute
+      windowMs: 60000,
       maxRequests: 60,
     },
 
-    // Stricter limit for sensitive endpoints
     auth: {
       windowMs: 60000,
       maxRequests: 5,
     },
 
-    // Upload rate limit
     upload: {
       windowMs: 60000,
       maxRequests: 10,
     },
 
-    // Ban settings
     ban: {
-      threshold: 5, // Violations before ban
-      duration: 3600000, // 1 hour
+      threshold: 5,
+      duration: 3600000,
     },
   },
 
-  // ===== CONTENT SECURITY =====
   contentSecurity: {
-    // Maximum content length
     maxLength: {
       comment: 1000,
       message: 500,
@@ -41,9 +29,8 @@ export const SECURITY_CONFIG = {
       url: 2048,
     },
 
-    // File upload restrictions
     upload: {
-      maxFileSize: 10 * 1024 * 1024, // 10MB
+      maxFileSize: 10 * 1024 * 1024,
       allowedTypes: [
         "image/jpeg",
         "image/png",
@@ -63,32 +50,25 @@ export const SECURITY_CONFIG = {
       ],
     },
 
-    // Threat detection thresholds
     threats: {
-      blockThreshold: 50, // Score above this = auto block
-      warnThreshold: 25, // Score above this = warning
+      blockThreshold: 50,
+      warnThreshold: 25,
     },
   },
 
-  // ===== DDOS PROTECTION =====
   ddos: {
-    // Connection limits
     maxConnectionsPerIP: 100,
 
-    // Request pattern detection
     burstDetection: {
-      windowMs: 1000, // 1 second
-      maxBurst: 20, // Max requests in 1 second
+      windowMs: 1000,
+      maxBurst: 20,
     },
 
-    // Automatic ban on DDOS detection
     autoBan: true,
-    autoBanDuration: 86400000, // 24 hours
+    autoBanDuration: 86400000,
   },
 
-  // ===== BLOCKED PATTERNS =====
   blocklist: {
-    // Gambling keywords (Indonesian)
     gambling: [
       "judol",
       "judi online",
@@ -103,7 +83,6 @@ export const SECURITY_CONFIG = {
       "sabung ayam",
     ],
 
-    // Suspicious file extensions
     dangerousExtensions: [
       ".exe",
       ".bat",
@@ -118,14 +97,12 @@ export const SECURITY_CONFIG = {
       ".jsp",
     ],
 
-    // Blocked User-Agents (bots)
     blockedUserAgents: [
       "scrapy",
       "nutch",
       "bot",
       "crawler",
       "spider",
-      // But allow legitimate search engines
       "!googlebot",
       "!bingbot",
       "!yandex",
@@ -133,15 +110,13 @@ export const SECURITY_CONFIG = {
     ],
   },
 
-  // ===== HEADERS =====
   headers: {
-    // Content Security Policy
     csp: {
       defaultSrc: ["'self'"],
       scriptSrc: [
         "'self'",
-        "'unsafe-inline'", // For Next.js
-        "'unsafe-eval'", // For Next.js dev
+        "'unsafe-inline'",
+        "'unsafe-eval'",
         "https://www.googletagmanager.com",
         "https://www.google-analytics.com",
       ],
@@ -158,6 +133,7 @@ export const SECURITY_CONFIG = {
         "'self'",
         "https://www.youtube.com",
         "https://www.youtube-nocookie.com",
+        "https://youtu.be",
       ],
       objectSrc: ["'none'"],
       baseUri: ["'self'"],
@@ -166,7 +142,6 @@ export const SECURITY_CONFIG = {
       upgradeInsecureRequests: [],
     },
 
-    // Other security headers
     xFrameOptions: "SAMEORIGIN",
     xContentTypeOptions: "nosniff",
     xXSSProtection: "1; mode=block",
@@ -183,28 +158,19 @@ export const SECURITY_CONFIG = {
     },
   },
 
-  // ===== MONITORING =====
   monitoring: {
-    // Log retention
     logRetentionDays: 7,
     maxLogs: 10000,
 
-    // Alert thresholds
     alerts: {
-      suspiciousActivityThreshold: 10, // Events per hour
-      blockedRequestsThreshold: 50, // Blocked requests per hour
+      suspiciousActivityThreshold: 10,
+      blockedRequestsThreshold: 50,
       highThreatScoreThreshold: 75,
     },
   },
 
-  // ===== WHITELISTS =====
   whitelist: {
-    // IPs that bypass rate limiting (if needed)
-    ips: [
-      // Add trusted IPs here
-    ],
-
-    // Paths that bypass some security checks
+    ips: [],
     paths: ["/api/health", "/api/status"],
   },
 };

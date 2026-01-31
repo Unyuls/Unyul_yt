@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Nabla, Poppins, Righteous } from "next/font/google";
 import "./globals.css";
+import BackToTop from "./components/back-to-top";
 
 const nabla = Nabla({
   variable: "--font-nabla",
@@ -118,6 +119,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
         {children}
+        <BackToTop />
       </body>
     </html>
   );

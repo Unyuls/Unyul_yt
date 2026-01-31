@@ -12,7 +12,6 @@ const About: React.FC = () => {
       className="w-full py-24 z-10 bg-gradient-to-b from-transparent via-black/60 to-black/80"
     >
       <div className="max-w-5xl mx-auto px-6">
-        {/* add scroll margin and a little more leading so glyphs aren't visually clipped */}
         <motion.h2
           className="scroll-mt-16 text-3xl sm:text-4xl lg:text-5xl font-righteous font-bold mb-8 leading-tight sm:leading-tight text-center text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-300"
           initial={{ opacity: 0, y: -20 }}
@@ -23,9 +22,7 @@ const About: React.FC = () => {
           Tentang Unyul
         </motion.h2>
 
-        {/* Two-column: video (left) + text (right). Stacks on small screens */}
         <div className="flex flex-col md:flex-row items-start gap-8">
-          {/* Video column */}
           <motion.div
             className="w-full md:w-1/2"
             initial={{ opacity: 0, x: -50 }}
@@ -44,7 +41,6 @@ const About: React.FC = () => {
             </div>
           </motion.div>
 
-          {/* Text column */}
           <motion.div
             className="w-full md:w-1/2 text-left"
             initial={{ opacity: 0, x: 50 }}
@@ -67,7 +63,6 @@ const About: React.FC = () => {
           </motion.div>
         </div>
 
-        {/* Icons row (preserve original interactions) */}
         <motion.div
           className="mt-12 flex items-center justify-center gap-10"
           initial={{ opacity: 0, y: 50 }}

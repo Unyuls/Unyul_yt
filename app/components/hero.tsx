@@ -13,7 +13,6 @@ const Hero = () => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8 }}
     >
-      {/* Left artwork */}
       <div className="absolute inset-0 flex">
         <div className="relative w-1/2 h-full hidden sm:block">
           <Image
@@ -28,7 +27,6 @@ const Hero = () => {
         <div className="flex-1" />
       </div>
 
-      {/* Mobile artwork */}
       <div className="absolute inset-0 block sm:hidden">
         <Image
           src="/assets/img/gaming.jpg"

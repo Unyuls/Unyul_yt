@@ -16,25 +16,42 @@ body {
   scroll-behavior: smooth;
 }
 
-/* Nabla font */
 .font-nabla {
-  font-family: var(--font-nabla), ui-sans-serif, system-ui, -apple-system,
-    "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  font-family:
+    var(--font-nabla),
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    "Helvetica Neue",
+    Arial;
 }
 
-/* Poppins font */
 .font-poppins {
-  font-family: var(--font-poppins), ui-sans-serif, system-ui, -apple-system,
-    "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  font-family:
+    var(--font-poppins),
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    "Helvetica Neue",
+    Arial;
 }
 
-/* Righteous font */
 .font-righteous {
-  font-family: var(--font-righteous), ui-sans-serif, system-ui, -apple-system,
-    "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  font-family:
+    var(--font-righteous),
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    "Helvetica Neue",
+    Arial;
 }
 
-/* Hide scrollbar */
 ::-webkit-scrollbar {
   display: none;
 }

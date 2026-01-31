@@ -29,7 +29,6 @@ const Navbar = () => {
       } font-poppins`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Mobile */}
         <div className="md:hidden flex items-center justify-start h-16">
           <button
             onClick={() => {
@@ -45,7 +44,6 @@ const Navbar = () => {
             }}
             className="relative text-white hover:text-gray-300 focus:outline-none focus:text-gray-300"
           >
-            {/* icon container: keep same size so icons overlap exactly */}
             <span className="relative inline-block h-6 w-6">
               <Menu
                 className={`absolute inset-0 m-auto h-6 w-6 transform transition duration-300 ease-in-out ${
@@ -99,8 +97,8 @@ const Navbar = () => {
             isOpen
               ? "opacity-100 translate-x-0"
               : isClosing
-              ? "opacity-100 translate-x-full"
-              : "opacity-0 -translate-x-full"
+                ? "opacity-100 translate-x-full"
+                : "opacity-0 -translate-x-full"
           }`}
           onClick={() => {
             setIsClosing(true);

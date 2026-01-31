@@ -1,12 +1,3 @@
-/**
- * SECURITY UTILITIES
- * Comprehensive security functions for input validation, sanitization, and protection
- */
-
-// ===== INPUT SANITIZATION =====
-/**
- * Sanitize user input to prevent XSS attacks
- */
 export function sanitizeInput(input: string): string {
   if (!input) return "";
 
@@ -20,49 +11,35 @@ export function sanitizeInput(input: string): string {
     .replace(/=/g, "&#x3D;");
 }
 
-/**
- * Sanitize HTML content more aggressively
- */
 export function sanitizeHTML(html: string): string {
   if (!html) return "";
 
-  // Remove all script tags and their content
   let clean = html.replace(
     /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,
     "",
   );
 
-  // Remove event handlers
   clean = clean.replace(/on\w+\s*=\s*["'][^"']*["']/gi, "");
   clean = clean.replace(/on\w+\s*=\s*[^\s>]*/gi, "");
 
-  // Remove javascript: protocol
   clean = clean.replace(/javascript:/gi, "");
 
-  // Remove data: protocol (can be used for XSS)
   clean = clean.replace(/data:text\/html/gi, "");
 
-  // Remove iframe, object, embed tags
   clean = clean.replace(/<(iframe|object|embed|applet)[^>]*>.*?<\/\1>/gi, "");
 
   return clean;
 }
 
-/**
- * Validate and sanitize URL to prevent XSS and injection
- */
 export function sanitizeURL(url: string): string | null {
   if (!url) return null;
 
   try {
     const urlObj = new URL(url);
 
-    // Only allow http and https protocols
     if (!["http:", "https:"].includes(urlObj.protocol)) {
       return null;
     }
-
-    // Block suspicious patterns in URL
     const suspicious = [
       /javascript:/gi,
       /data:/gi,
@@ -83,10 +60,6 @@ export function sanitizeURL(url: string): string | null {
   }
 }
 
-// ===== CONTENT VALIDATION =====
-/**
- * Check if content contains gambling/casino related keywords (Indonesian context)
- */
 export function containsGamblingContent(text: string): boolean {
   const gamblingPatterns = [
     /jud[io]l/gi,
@@ -111,9 +84,6 @@ export function containsGamblingContent(text: string): boolean {
   return gamblingPatterns.some((pattern) => pattern.test(text));
 }
 
-/**
- * Check if content contains malicious scripts
- */
 export function containsMaliciousScript(text: string): boolean {
   const scriptPatterns = [
     /<script[^>]*>.*?<\/script>/gi,
@@ -133,9 +103,6 @@ export function containsMaliciousScript(text: string): boolean {
   return scriptPatterns.some((pattern) => pattern.test(text));
 }
 
-/**
- * Check if content contains SQL injection attempts
- */
 export function containsSQLInjection(text: string): boolean {
   const sqlPatterns = [
     /(\bunion\b.*\bselect\b)/gi,
@@ -152,9 +119,6 @@ export function containsSQLInjection(text: string): boolean {
   return sqlPatterns.some((pattern) => pattern.test(text));
 }
 
-/**
- * Comprehensive malicious content check
- */
 export function isMaliciousContent(text: string): {
   isMalicious: boolean;
   reason?: string;
@@ -174,15 +138,10 @@ export function isMaliciousContent(text: string): {
   return { isMalicious: false };
 }
 
-// ===== FILE VALIDATION =====
-/**
- * Validate file upload to prevent malware
- */
 export function validateFile(file: File): {
   isValid: boolean;
   error?: string;
 } {
-  // Allowed file types
   const allowedTypes = [
     "image/jpeg",
     "image/png",
@@ -194,7 +153,6 @@ export function validateFile(file: File): {
     "application/pdf",
   ];
 
-  // Dangerous extensions
   const dangerousExtensions = [
     ".exe",
     ".bat",
@@ -213,24 +171,20 @@ export function validateFile(file: File): {
     ".pl",
   ];
 
-  // Check file type
   if (!allowedTypes.includes(file.type)) {
     return { isValid: false, error: "File type not allowed" };
   }
 
-  // Check file extension
   const fileName = file.name.toLowerCase();
   if (dangerousExtensions.some((ext) => fileName.endsWith(ext))) {
     return { isValid: false, error: "Dangerous file extension detected" };
   }
 
-  // Check file size (max 10MB)
   const maxSize = 10 * 1024 * 1024;
   if (file.size > maxSize) {
     return { isValid: false, error: "File size exceeds limit (10MB)" };
   }
 
-  // Check for double extensions (e.g., image.jpg.exe)
   const parts = fileName.split(".");
   if (parts.length > 2) {
     const secondToLast = "." + parts[parts.length - 2];
@@ -242,10 +196,6 @@ export function validateFile(file: File): {
   return { isValid: true };
 }
 
-// ===== RATE LIMITING HELPERS =====
-/**
- * Simple in-memory rate limiter
- */
 export class RateLimiter {
   private requests: Map<string, number[]> = new Map();
   private limit: number;
@@ -260,22 +210,16 @@ export class RateLimiter {
     const now = Date.now();
     const windowStart = now - this.windowMs;
 
-    // Get existing requests for this identifier
     let requests = this.requests.get(identifier) || [];
 
-    // Filter out old requests
     requests = requests.filter((time) => time > windowStart);
 
-    // Check if limit exceeded
     if (requests.length >= this.limit) {
       return false;
     }
-
-    // Add current request
     requests.push(now);
     this.requests.set(identifier, requests);
 
-    // Clean up old entries periodically
     if (Math.random() < 0.01) {
       this.cleanup(windowStart);
     }
@@ -295,7 +239,6 @@ export class RateLimiter {
   }
 }
 
-// ===== SECURITY LOGGING =====
 export interface SecurityLog {
   timestamp: number;
   type: "suspicious" | "blocked" | "warning";
@@ -314,12 +257,9 @@ class SecurityLogger {
       timestamp: Date.now(),
     });
 
-    // Keep only recent logs
     if (this.logs.length > this.maxLogs) {
       this.logs = this.logs.slice(-this.maxLogs);
     }
-
-    // Console log for monitoring
     console.warn(
       `[SECURITY ${log.type.toUpperCase()}] ${log.ip}: ${log.reason}`,
     );
@@ -337,17 +277,10 @@ class SecurityLogger {
 
 export const securityLogger = new SecurityLogger();
 
-// ===== CSRF PROTECTION =====
-/**
- * Generate CSRF token
- */
 export function generateCSRFToken(): string {
   return crypto.randomUUID();
 }
 
-/**
- * Validate CSRF token
- */
 export function validateCSRFToken(
   token: string,
   expectedToken: string,
@@ -355,7 +288,6 @@ export function validateCSRFToken(
   return token === expectedToken;
 }
 
-// ===== EXPORTS =====
 export const security = {
   sanitizeInput,
   sanitizeHTML,

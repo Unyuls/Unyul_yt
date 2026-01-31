@@ -30,7 +30,6 @@ export default function SecurityMonitorPage() {
 
   useEffect(() => {
     fetchSecurityLogs();
-    // Auto-refresh setiap 10 detik
     const interval = setInterval(fetchSecurityLogs, 10000);
     return () => clearInterval(interval);
   }, [filter]);
@@ -123,7 +122,6 @@ export default function SecurityMonitorPage() {
 
   return (
     <div className="min-h-screen bg-gray-950 text-white p-8">
-      {/* Header */}
       <div className="max-w-7xl mx-auto">
         <div className="flex items-center justify-between mb-8">
           <div>
@@ -140,7 +138,6 @@ export default function SecurityMonitorPage() {
           </button>
         </div>
 
-        {/* Statistics Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
           <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
             <div className="text-gray-400 text-sm mb-1">Total Events</div>
@@ -169,7 +166,6 @@ export default function SecurityMonitorPage() {
           </div>
         </div>
 
-        {/* Filters */}
         <div className="mb-6 flex gap-2">
           {["all", "blocked", "suspicious", "warning"].map((filterType) => (
             <button
@@ -186,7 +182,6 @@ export default function SecurityMonitorPage() {
           ))}
         </div>
 
-        {/* Security Logs Table */}
         <div className="bg-gray-900 border border-gray-800 rounded-lg overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
@@ -261,7 +256,6 @@ export default function SecurityMonitorPage() {
           </div>
         </div>
 
-        {/* Auto-refresh indicator */}
         <div className="mt-4 text-center text-sm text-gray-500">
           🔄 Auto-refreshing every 10 seconds
         </div>
