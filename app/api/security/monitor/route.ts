@@ -2,26 +2,18 @@ import { NextRequest, NextResponse } from "next/server";
 import { securityLogger } from "@/lib/security";
 import contentScanner from "@/lib/content-scanner";
 
-/**
- * SECURITY MONITORING API
- * Endpoint untuk monitoring ancaman keamanan real-time
- */
-
-// GET /api/security/monitor - Get security logs
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const limit = parseInt(searchParams.get("limit") || "100");
-    const type = searchParams.get("type"); // suspicious | blocked | warning
+    const type = searchParams.get("type");
 
     let logs = securityLogger.getLogs(limit);
 
-    // Filter by type if specified
     if (type) {
       logs = logs.filter((log) => log.type === type);
     }
 
-    // Statistics
     const stats = {
       total: logs.length,
       suspicious: logs.filter((l) => l.type === "suspicious").length,
@@ -43,7 +35,6 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST /api/security/monitor - Report security incident
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -56,13 +47,17 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Get client IP
     const ip =
       request.headers.get("x-forwarded-for")?.split(",")[0] ||
       request.headers.get("x-real-ip") ||
       "unknown";
 
-    // Log the incident
+    securityLogger.log({
+      type,
+      ip,
+      reason,
+      details,
+    });
     securityLogger.log({
       type,
       ip,
@@ -83,7 +78,6 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// DELETE /api/security/monitor - Clear old logs
 export async function DELETE(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);

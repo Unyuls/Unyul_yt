@@ -1,22 +1,18 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-// ===== RATE LIMITING & DDOS PROTECTION =====
 const requestCounts = new Map<string, { count: number; resetTime: number }>();
-const blockedIPs = new Map<string, number>(); // IP -> blocked until timestamp
-const suspiciousPatterns = new Map<string, number>(); // Track suspicious activity
+const blockedIPs = new Map<string, number>();
+const suspiciousPatterns = new Map<string, number>();
 
-// Configuration
 const RATE_LIMIT = {
-  WINDOW_MS: 60000, // 1 minute
-  MAX_REQUESTS: 60, // 60 requests per minute
-  BAN_THRESHOLD: 5, // Ban after 5 violations
-  BAN_DURATION: 3600000, // 1 hour ban
+  WINDOW_MS: 60000,
+  MAX_REQUESTS: 60,
+  BAN_THRESHOLD: 5,
+  BAN_DURATION: 3600000,
 };
 
-// ===== MALICIOUS PATTERN DETECTION =====
 const MALICIOUS_PATTERNS = [
-  // Gambling/Casino patterns (Indonesian & English)
   /jud[io]l/gi,
   /slot\s*online/gi,
   /poker\s*online/gi,
@@ -28,7 +24,6 @@ const MALICIOUS_PATTERNS = [
   /deposit/gi,
   /bonus.*slot/gi,
 
-  // Script injection patterns
   /<script[^>]*>.*?<\/script>/gi,
   /javascript:/gi,
   /onerror\s*=/gi,
@@ -38,17 +33,14 @@ const MALICIOUS_PATTERNS = [
   /innerHTML/gi,
   /outerHTML/gi,
 
-  // SQL Injection patterns
   /(\bunion\b.*\bselect\b|\bselect\b.*\bfrom\b|\binsert\b.*\binto\b|\bdelete\b.*\bfrom\b|\bdrop\b.*\btable\b)/gi,
   /('|(--|;|\/\*|\*\/))/g,
 
-  // XSS patterns
   /(<|%3C).*script.*(>|%3E)/gi,
   /(<|%3C).*iframe.*(>|%3E)/gi,
   /(<|%3C).*object.*(>|%3E)/gi,
   /(<|%3C).*embed.*(>|%3E)/gi,
 
-  // File upload exploits
   /\.php$/gi,
   /\.asp$/gi,
   /\.jsp$/gi,
@@ -57,13 +49,10 @@ const MALICIOUS_PATTERNS = [
   /\.bat$/gi,
   /\.cmd$/gi,
 
-  // Path traversal
   /\.\.[\/\\]/g,
   /etc[\/\\]passwd/gi,
   /windows[\/\\]system32/gi,
 ];
-
-// Suspicious User-Agent patterns
 const SUSPICIOUS_USER_AGENTS = [
   /bot/i,
   /crawler/i,
@@ -74,9 +63,7 @@ const SUSPICIOUS_USER_AGENTS = [
   /python/i,
 ];
 
-// ===== SECURITY HEADERS =====
 const securityHeaders = {
-  // Content Security Policy - CRITICAL for preventing script injection
   "Content-Security-Policy": [
     "default-src 'self'",
     "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com",
@@ -93,29 +80,21 @@ const securityHeaders = {
     "upgrade-insecure-requests",
   ].join("; "),
 
-  // Prevent clickjacking
   "X-Frame-Options": "SAMEORIGIN",
 
-  // Prevent MIME type sniffing
   "X-Content-Type-Options": "nosniff",
 
-  // XSS Protection
   "X-XSS-Protection": "1; mode=block",
 
-  // Referrer Policy
   "Referrer-Policy": "strict-origin-when-cross-origin",
 
-  // Permissions Policy
   "Permissions-Policy": "geolocation=(), microphone=(), camera=(), payment=()",
 
-  // Strict Transport Security
   "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
 
-  // Remove server information
   "X-Powered-By": "Unknown",
 };
 
-// ===== HELPER FUNCTIONS =====
 function getClientIP(request: NextRequest): string {
   const forwarded = request.headers.get("x-forwarded-for");
   const realIP = request.headers.get("x-real-ip");
@@ -158,14 +137,12 @@ function checkRateLimit(ip: string): boolean {
   record.count++;
 
   if (record.count > RATE_LIMIT.MAX_REQUESTS) {
-    // Track violations
     const violations = (suspiciousPatterns.get(ip) || 0) + 1;
     suspiciousPatterns.set(ip, violations);
 
-    // Ban if threshold exceeded
     if (violations >= RATE_LIMIT.BAN_THRESHOLD) {
       blockedIPs.set(ip, now + RATE_LIMIT.BAN_DURATION);
-      console.warn(`🚨 IP BANNED: ${ip} - Too many rate limit violations`);
+      console.warn(`IP BANNED: ${ip} - Jangan spam anying!`);
     }
 
     return false;
@@ -181,7 +158,6 @@ function containsMaliciousContent(text: string): boolean {
 function isSuspiciousUserAgent(userAgent: string | null): boolean {
   if (!userAgent) return true;
 
-  // Allow legitimate search engines
   if (/googlebot|bingbot|yandex|duckduckbot/i.test(userAgent)) {
     return false;
   }
@@ -198,23 +174,20 @@ function sanitizeInput(text: string): string {
     .replace(/\//g, "&#x2F;");
 }
 
-// ===== MAIN MIDDLEWARE =====
 export function middleware(request: NextRequest) {
   const ip = getClientIP(request);
   const userAgent = request.headers.get("user-agent");
   const url = request.nextUrl.pathname;
   const searchParams = request.nextUrl.searchParams.toString();
 
-  // 1. Check if IP is blocked
   if (isIPBlocked(ip)) {
-    console.warn(`🚫 Blocked request from banned IP: ${ip}`);
-    return new NextResponse("Access Denied - IP Banned", { status: 403 });
+    console.warn(`Blocked request from banned IP: ${ip}`);
+    return new NextResponse("Lu dibanned anying!", { status: 403 });
   }
 
-  // 2. Rate limiting & DDOS protection
   if (!checkRateLimit(ip)) {
-    console.warn(`⚠️ Rate limit exceeded: ${ip} on ${url}`);
-    return new NextResponse("Too Many Requests - Rate Limit Exceeded", {
+    console.warn(`Rate limit exceeded: ${ip} on ${url}`);
+    return new NextResponse("Spam bangsat!", {
       status: 429,
       headers: {
         "Retry-After": "60",
@@ -222,46 +195,39 @@ export function middleware(request: NextRequest) {
     });
   }
 
-  // 3. Check for suspicious User-Agent (but don't block, just log)
   if (isSuspiciousUserAgent(userAgent)) {
-    console.warn(`🤖 Suspicious User-Agent detected: ${ip} - ${userAgent}`);
-    // Track but don't block - could be legitimate
+    console.warn(`Konten judol terdeteksi, dengan IP: ${ip} - ${userAgent}`);
     const suspicious = (suspiciousPatterns.get(ip) || 0) + 0.5;
     suspiciousPatterns.set(ip, suspicious);
   }
 
-  // 4. Scan URL and query parameters for malicious patterns
   const fullURL = url + (searchParams ? "?" + searchParams : "");
   if (containsMaliciousContent(fullURL)) {
-    console.error(`🚨 MALICIOUS CONTENT DETECTED in URL: ${ip} - ${fullURL}`);
+    console.error(`Konten judol terdeteksi: ${ip} - ${fullURL}`);
 
-    // Ban immediately for malicious content
-    blockedIPs.set(ip, Date.now() + RATE_LIMIT.BAN_DURATION * 24); // 24-hour ban
+    blockedIPs.set(ip, Date.now() + RATE_LIMIT.BAN_DURATION * 24);
 
     return new NextResponse("Forbidden - Malicious Content Detected", {
       status: 403,
     });
   }
 
-  // 5. Scan POST/PUT request bodies
   if (request.method === "POST" || request.method === "PUT") {
     const contentType = request.headers.get("content-type") || "";
 
-    // Check for suspicious content types
     if (
       !contentType.includes("application/json") &&
       !contentType.includes("application/x-www-form-urlencoded") &&
       !contentType.includes("multipart/form-data") &&
       !contentType.includes("text/plain")
     ) {
-      console.warn(`🚨 Suspicious content-type: ${ip} - ${contentType}`);
+      console.warn(`Konten judol terdeteksi: ${ip} - ${contentType}`);
       return new NextResponse("Forbidden - Invalid Content Type", {
         status: 403,
       });
     }
   }
 
-  // 6. Block direct access to sensitive files
   const sensitivePatterns = [
     /\.env/i,
     /\.git/i,
@@ -272,33 +238,22 @@ export function middleware(request: NextRequest) {
   ];
 
   if (sensitivePatterns.some((pattern) => pattern.test(url))) {
-    console.error(`🚨 Attempted access to sensitive file: ${ip} - ${url}`);
+    console.error(`File sensitif terdeteksi: ${ip} - ${url}`);
     return new NextResponse("Forbidden", { status: 403 });
   }
 
-  // 7. Add security headers to response
   const response = NextResponse.next();
 
   Object.entries(securityHeaders).forEach(([key, value]) => {
     response.headers.set(key, value);
   });
 
-  // Add custom security headers
   response.headers.set("X-Client-IP", ip);
   response.headers.set("X-Request-ID", crypto.randomUUID());
 
   return response;
 }
 
-// ===== MIDDLEWARE CONFIG =====
 export const config = {
-  matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     */
-    "/((?!_next/static|_next/image|favicon.ico).*)",
-  ],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
 };

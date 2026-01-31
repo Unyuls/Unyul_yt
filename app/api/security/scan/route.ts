@@ -1,11 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import contentScanner from "@/lib/content-scanner";
 
-/**
- * CONTENT SCAN API
- * Endpoint untuk scan konten mencari ancaman seperti iklan judol, XSS, SQL injection, dll
- */
-
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -18,10 +13,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Scan the content
     const scanResult = contentScanner.scan(content);
 
-    // Check if content should be blocked
     const shouldBlock = contentScanner.shouldBlock(content);
 
     let response: any = {
@@ -32,12 +25,10 @@ export async function POST(request: NextRequest) {
       threatCount: scanResult.threats.length,
     };
 
-    // Add detailed information if requested
     if (detailed) {
       response.threats = scanResult.threats;
       response.report = contentScanner.getReport(content);
     } else {
-      // Just summary
       response.threatTypes = [
         ...new Set(scanResult.threats.map((t) => t.type)),
       ];
@@ -70,7 +61,6 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// GET endpoint for testing with query params
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
