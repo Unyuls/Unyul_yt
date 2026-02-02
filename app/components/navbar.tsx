@@ -1,24 +1,74 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, memo } from "react";
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
 
-const Navbar = () => {
+// Memoized nav link component
+const NavLink = memo(function NavLink({
+  href,
+  children,
+  className,
+  onClick,
+}: {
+  href: string;
+  children: React.ReactNode;
+  className: string;
+  onClick?: () => void;
+}) {
+  return (
+    <Link href={href} className={className} onClick={onClick} prefetch={false}>
+      {children}
+    </Link>
+  );
+});
+
+const Navbar = memo(function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
 
   useEffect(() => {
+    let ticking = false;
+
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 0);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setIsScrolled(window.scrollY > 0);
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
 
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     handleScroll();
 
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const closeMenu = useCallback(() => {
+    setIsClosing(true);
+    setTimeout(() => {
+      setIsOpen(false);
+      setIsClosing(false);
+    }, 300);
+  }, []);
+
+  const toggleMenu = useCallback(() => {
+    if (isOpen) {
+      closeMenu();
+    } else {
+      setIsOpen(true);
+    }
+  }, [isOpen, closeMenu]);
+
+  const navItems = [
+    { href: "#hero", label: "Beranda" },
+    { href: "#about", label: "Tentang Unyul" },
+    { href: "#gallery", label: "Galeri Unyul" },
+    { href: "#find", label: "Temukan Unyul" },
+  ];
 
   return (
     <nav
@@ -29,20 +79,13 @@ const Navbar = () => {
       } font-poppins`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Mobile menu button */}
         <div className="md:hidden flex items-center justify-start h-16">
           <button
-            onClick={() => {
-              if (isOpen) {
-                setIsClosing(true);
-                setTimeout(() => {
-                  setIsOpen(false);
-                  setIsClosing(false);
-                }, 300);
-              } else {
-                setIsOpen(true);
-              }
-            }}
+            onClick={toggleMenu}
             className="relative text-white hover:text-gray-300 focus:outline-none focus:text-gray-300"
+            aria-label={isOpen ? "Close menu" : "Open menu"}
+            aria-expanded={isOpen ? "true" : "false"}
           >
             <span className="relative inline-block h-6 w-6">
               <Menu
@@ -62,35 +105,22 @@ const Navbar = () => {
             </span>
           </button>
         </div>
-        {/* Desktop */}
+
+        {/* Desktop navigation */}
         <div className="hidden md:flex items-center justify-end h-16">
           <div className="flex space-x-8">
-            <Link
-              href="#hero"
-              className="text-white hover:text-gray-300 hover:bg-white/10 active:bg-white/20 px-3 py-2 text-sm font-medium transition-all duration-200 rounded-full"
-            >
-              Beranda
-            </Link>
-            <Link
-              href="#about"
-              className="text-white hover:text-gray-300 hover:bg-white/10 active:bg-white/20 px-3 py-2 text-sm font-medium transition-all duration-200 rounded-full"
-            >
-              Tentang Unyul
-            </Link>
-            <Link
-              href="#gallery"
-              className="text-white hover:text-gray-300 hover:bg-white/10 active:bg-white/20 px-3 py-2 text-sm font-medium transition-all duration-200 rounded-full"
-            >
-              Galeri Unyul
-            </Link>
-            <Link
-              href="#find"
-              className="text-white hover:text-gray-300 hover:bg-white/10 active:bg-white/20 px-3 py-2 text-sm font-medium transition-all duration-200 rounded-full"
-            >
-              Temukan Unyul
-            </Link>
+            {navItems.map((item) => (
+              <NavLink
+                key={item.href}
+                href={item.href}
+                className="text-white hover:text-gray-300 hover:bg-white/10 active:bg-white/20 px-3 py-2 text-sm font-medium transition-all duration-200 rounded-full"
+              >
+                {item.label}
+              </NavLink>
+            ))}
           </div>
         </div>
+
         {/* Mobile menu */}
         <div
           className={`fixed inset-0 z-40 md:hidden transition duration-300 ${
@@ -100,13 +130,7 @@ const Navbar = () => {
                 ? "opacity-100 translate-x-full"
                 : "opacity-0 -translate-x-full"
           }`}
-          onClick={() => {
-            setIsClosing(true);
-            setTimeout(() => {
-              setIsOpen(false);
-              setIsClosing(false);
-            }, 300);
-          }}
+          onClick={closeMenu}
         >
           <div
             className="absolute inset-0 bg-black/95 px-4 pt-20 pb-6 space-y-4 sm:px-6 overflow-auto"
@@ -114,74 +138,27 @@ const Navbar = () => {
           >
             <button
               aria-label="Close menu"
-              onClick={() => {
-                setIsClosing(true);
-                setTimeout(() => {
-                  setIsOpen(false);
-                  setIsClosing(false);
-                }, 300);
-              }}
+              onClick={closeMenu}
               className="absolute top-4 left-4 z-50 text-white p-2 rounded-md hover:text-gray-300 focus:outline-none"
             >
               <X className="h-7 w-7" />
             </button>
-            <Link
-              href="#hero"
-              className="text-white hover:text-gray-300 hover:bg-white/10 active:bg-white/20 block px-3 py-2 text-base font-medium transition-all duration-200 rounded-lg"
-              onClick={() => {
-                setIsClosing(true);
-                setTimeout(() => {
-                  setIsOpen(false);
-                  setIsClosing(false);
-                }, 300);
-              }}
-            >
-              Beranda
-            </Link>
-            <Link
-              href="#about"
-              className="text-white hover:text-gray-300 hover:bg-white/10 active:bg-white/20 block px-3 py-2 text-base font-medium transition-all duration-200 rounded-lg"
-              onClick={() => {
-                setIsClosing(true);
-                setTimeout(() => {
-                  setIsOpen(false);
-                  setIsClosing(false);
-                }, 300);
-              }}
-            >
-              Tentang Unyul
-            </Link>
-            <Link
-              href="#gallery"
-              className="text-white hover:text-gray-300 hover:bg-white/10 active:bg-white/20 block px-3 py-2 text-base font-medium transition-all duration-200 rounded-lg"
-              onClick={() => {
-                setIsClosing(true);
-                setTimeout(() => {
-                  setIsOpen(false);
-                  setIsClosing(false);
-                }, 300);
-              }}
-            >
-              Galeri Unyul
-            </Link>
-            <Link
-              href="#find"
-              className="text-white hover:text-gray-300 hover:bg-white/10 active:bg-white/20 block px-3 py-2 text-base font-medium transition-all duration-200 rounded-lg"
-              onClick={() => {
-                setIsClosing(true);
-                setTimeout(() => {
-                  setIsOpen(false);
-                  setIsClosing(false);
-                }, 300);
-              }}
-            >
-              Temukan Unyul
-            </Link>
+
+            {navItems.map((item) => (
+              <NavLink
+                key={item.href}
+                href={item.href}
+                className="text-white hover:text-gray-300 hover:bg-white/10 active:bg-white/20 block px-3 py-2 text-base font-medium transition-all duration-200 rounded-lg"
+                onClick={closeMenu}
+              >
+                {item.label}
+              </NavLink>
+            ))}
           </div>
         </div>
       </div>
     </nav>
   );
-};
+});
 
 export default Navbar;

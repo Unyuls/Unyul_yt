@@ -1,6 +1,6 @@
 /**
- * NEXT.JS CONFIG WITH SECURITY ENHANCEMENTS
- * Enhanced Next.js configuration with security headers and optimizations
+ * NEXT.JS CONFIG WITH SECURITY ENHANCEMENTS AND PERFORMANCE OPTIMIZATION
+ * Enhanced Next.js configuration with security headers, image optimization, and performance
  */
 
 import type { NextConfig } from "next";
@@ -8,6 +8,12 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   // Strict mode for better error handling
   reactStrictMode: true,
+
+  // Compiler optimizations
+  compiler: {
+    // Remove console.log in production
+    removeConsole: process.env.NODE_ENV === "production",
+  },
 
   // Security headers
   async headers() {
@@ -64,6 +70,21 @@ const nextConfig: NextConfig = {
             key: "X-Powered-By",
             value: "Unknown",
           },
+          // Cache Control for static assets
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+      // Specific cache headers for images
+      {
+        source: "/assets/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
         ],
       },
     ];
@@ -71,11 +92,21 @@ const nextConfig: NextConfig = {
 
   // Image optimization configuration
   images: {
-    domains: [
-      "i.ytimg.com", // YouTube thumbnails
-      "yt3.googleusercontent.com", // YouTube profile images
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "i.ytimg.com",
+      },
+      {
+        protocol: "https",
+        hostname: "yt3.googleusercontent.com",
+      },
     ],
-    formats: ["image/webp", "image/avif"],
+    formats: ["image/avif", "image/webp"],
+    // Optimize images with better quality/size balance
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+    minimumCacheTTL: 31536000, // 1 year cache
   },
 
   // Redirect HTTP to HTTPS in production
@@ -90,9 +121,10 @@ const nextConfig: NextConfig = {
     SITE_NAME: "Unyul Web",
   },
 
-  // Experimental features
+  // Experimental features for performance
   experimental: {
-    // Add experimental features here if needed
+    // Enable optimized package imports
+    optimizePackageImports: ["lucide-react", "motion"],
   },
 
   // Disable X-Powered-By header

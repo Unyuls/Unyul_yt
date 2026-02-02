@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, memo } from "react";
 import {
   motion,
   AnimatePresence,
@@ -10,7 +10,7 @@ import {
 } from "motion/react";
 import { ArrowUp } from "lucide-react";
 
-export default function BackToTop() {
+const BackToTop = memo(function BackToTop() {
   const [isVisible, setIsVisible] = useState(false);
   const { scrollYProgress } = useScroll();
 
@@ -26,24 +26,28 @@ export default function BackToTop() {
   const dashOffset = useTransform(smoothProgress, [0, 1], [circumference, 0]);
 
   useEffect(() => {
+    let ticking = false;
+
     const toggleVisibility = () => {
-      if (window.scrollY > 300) {
-        setIsVisible(true);
-      } else {
-        setIsVisible(false);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setIsVisible(window.scrollY > 300);
+          ticking = false;
+        });
+        ticking = true;
       }
     };
 
-    window.addEventListener("scroll", toggleVisibility);
+    window.addEventListener("scroll", toggleVisibility, { passive: true });
     return () => window.removeEventListener("scroll", toggleVisibility);
   }, []);
 
-  const scrollToTop = () => {
+  const scrollToTop = useCallback(() => {
     window.scrollTo({
       top: 0,
       behavior: "smooth",
     });
-  };
+  }, []);
 
   return (
     <AnimatePresence>
@@ -92,4 +96,6 @@ export default function BackToTop() {
       )}
     </AnimatePresence>
   );
-}
+});
+
+export default BackToTop;

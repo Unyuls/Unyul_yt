@@ -156,13 +156,19 @@ function containsMaliciousContent(text: string): boolean {
 }
 
 function isSuspiciousUserAgent(userAgent: string | null): boolean {
-  if (!userAgent) return true;
+  if (!userAgent) return false;
 
   if (/googlebot|bingbot|yandex|duckduckbot/i.test(userAgent)) {
     return false;
   }
 
   return SUSPICIOUS_USER_AGENTS.some((pattern) => pattern.test(userAgent));
+}
+
+function isLocalhost(ip: string): boolean {
+  return (
+    ip === "::1" || ip === "127.0.0.1" || ip === "localhost" || ip === "unknown"
+  );
 }
 
 function sanitizeInput(text: string): string {
@@ -180,14 +186,22 @@ export function middleware(request: NextRequest) {
   const url = request.nextUrl.pathname;
   const searchParams = request.nextUrl.searchParams.toString();
 
+  if (isLocalhost(ip)) {
+    const response = NextResponse.next();
+    Object.entries(securityHeaders).forEach(([key, value]) => {
+      response.headers.set(key, value);
+    });
+    return response;
+  }
+
   if (isIPBlocked(ip)) {
     console.warn(`Blocked request from banned IP: ${ip}`);
-    return new NextResponse("Lu dibanned anying!", { status: 403 });
+    return new NextResponse("Access Denied", { status: 403 });
   }
 
   if (!checkRateLimit(ip)) {
     console.warn(`Rate limit exceeded: ${ip} on ${url}`);
-    return new NextResponse("Spam bangsat!", {
+    return new NextResponse("Too Many Requests", {
       status: 429,
       headers: {
         "Retry-After": "60",
@@ -196,7 +210,7 @@ export function middleware(request: NextRequest) {
   }
 
   if (isSuspiciousUserAgent(userAgent)) {
-    console.warn(`Konten judol terdeteksi, dengan IP: ${ip} - ${userAgent}`);
+    console.warn(`Suspicious user agent detected: ${ip} - ${userAgent}`);
     const suspicious = (suspiciousPatterns.get(ip) || 0) + 0.5;
     suspiciousPatterns.set(ip, suspicious);
   }

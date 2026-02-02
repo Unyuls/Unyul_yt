@@ -1,7 +1,8 @@
 "use client";
 
-import React from "react";
+import React, { memo, useMemo } from "react";
 import * as motion from "motion/react-client";
+import Image from "next/image";
 
 const images = [
   "/assets/img/gaming.jpg",
@@ -10,8 +11,37 @@ const images = [
   "/assets/img/dj.jpg",
 ];
 
-export default function Gallery() {
-  const duplicated = [...images, ...images];
+// Memoized gallery item to prevent re-renders
+const GalleryItem = memo(function GalleryItem({
+  src,
+  index,
+  row,
+}: {
+  src: string;
+  index: number;
+  row: "top" | "bottom";
+}) {
+  return (
+    <div
+      className="w-[9.5rem] h-[9.5rem] md:w-[11.5rem] md:h-[11.5rem] bg-neutral-800 rounded flex-none shadow-[0_6px_18px_rgba(0,0,0,0.6)] overflow-hidden relative"
+      key={`${row}-${index}`}
+    >
+      <Image
+        src={src}
+        alt={`Gallery image ${index + 1}`}
+        fill
+        sizes="(max-width: 768px) 152px, 184px"
+        className="object-cover"
+        loading="lazy"
+        quality={75}
+      />
+    </div>
+  );
+});
+
+const Gallery = memo(function Gallery() {
+  // Memoize duplicated arrays to prevent recreation on each render
+  const duplicated = useMemo(() => [...images, ...images], []);
 
   return (
     <section
@@ -34,17 +64,13 @@ export default function Gallery() {
             className="flex gap-8 items-center"
             animate={{ x: "-50%" }}
             transition={{
-              duration: 22,
+              duration: 30, // Slower animation for better performance
               ease: "linear",
               repeat: Infinity,
             }}
           >
             {duplicated.map((src, i) => (
-              <div
-                className="w-[9.5rem] h-[9.5rem] md:w-[11.5rem] md:h-[11.5rem] bg-[#d9d9d9] bg-cover bg-center rounded flex-none shadow-[0_6px_18px_rgba(0,0,0,0.6)]"
-                key={`top-${i}`}
-                style={{ backgroundImage: `url(${src})` }}
-              />
+              <GalleryItem key={`top-${i}`} src={src} index={i} row="top" />
             ))}
           </motion.div>
         </div>
@@ -55,21 +81,19 @@ export default function Gallery() {
             initial={{ x: "-50%" }}
             animate={{ x: "0%" }}
             transition={{
-              duration: 26,
+              duration: 35, // Slower animation for better performance
               ease: "linear",
               repeat: Infinity,
             }}
           >
             {duplicated.map((src, i) => (
-              <div
-                className="w-[9.5rem] h-[9.5rem] md:w-[11.5rem] md:h-[11.5rem] bg-[#d9d9d9] bg-cover bg-center rounded flex-none shadow-[0_6px_18px_rgba(0,0,0,0.6)]"
-                key={`bot-${i}`}
-                style={{ backgroundImage: `url(${src})` }}
-              />
+              <GalleryItem key={`bot-${i}`} src={src} index={i} row="bottom" />
             ))}
           </motion.div>
         </div>
       </motion.div>
     </section>
   );
-}
+});
+
+export default Gallery;
