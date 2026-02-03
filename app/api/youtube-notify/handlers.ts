@@ -1,14 +1,30 @@
 import { NextRequest, NextResponse } from "next/server";
 import { CONFIG } from "./config";
-import { loadLastChecked, saveLastChecked } from "./storage";
+import { loadLastChecked, saveLastChecked, refreshFromFile } from "./storage";
 import { sendDiscordEmbed } from "./discord";
 import { performChecks } from "./service";
 import { DiscordEmbed } from "./types";
+
+// Logging helper
+const log = (action: string, details: Record<string, unknown>) => {
+  const timestamp = new Date().toISOString();
+  console.log(
+    `[HANDLER ${timestamp}] ${action}:`,
+    JSON.stringify(details, null, 2),
+  );
+};
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const force = searchParams.get("force") === "true";
   const status = searchParams.get("status") === "true";
+
+  log("REQUEST_RECEIVED", {
+    type: "GET",
+    force,
+    status,
+    url: request.url,
+  });
 
   const missingEnvVars = [];
   if (!CONFIG.DISCORD_TOKEN) missingEnvVars.push("DISCORD_TOKEN");
@@ -29,12 +45,21 @@ export async function GET(request: NextRequest) {
 
   try {
     if (status) {
-      const lastChecked = await loadLastChecked();
+      // Force refresh from file to ensure we get the latest data
+      const lastChecked = await refreshFromFile();
+      const serverTime = new Date().toISOString();
+
+      log("STATUS_REQUEST", {
+        lastCheckedAt: lastChecked.lastCheckedAt,
+        serverTime,
+        lastVideoId: lastChecked.lastVideoId,
+      });
+
       return NextResponse.json({
         success: true,
         status: "active",
         lastChecked,
-        serverTime: new Date().toISOString(),
+        serverTime,
         config: {
           channelId: CONFIG.YOUTUBE_CHANNEL_ID,
           channelName: CONFIG.CHANNEL_NAME,
@@ -66,9 +91,15 @@ export async function GET(request: NextRequest) {
 
       // Update lastCheckedAt even for test notifications
       const currentData = await loadLastChecked();
+      const newTimestamp = new Date().toISOString();
       await saveLastChecked({
         ...currentData,
-        lastCheckedAt: new Date().toISOString(),
+        lastCheckedAt: newTimestamp,
+      });
+
+      log("TEST_NOTIFICATION_SENT", {
+        success: sent,
+        newLastCheckedAt: newTimestamp,
       });
 
       return NextResponse.json({
@@ -76,11 +107,18 @@ export async function GET(request: NextRequest) {
         message: sent
           ? "Test notification sent!"
           : "Failed to send test notification",
-        timestamp: new Date().toISOString(),
+        timestamp: newTimestamp,
+        checkedAt: newTimestamp,
       });
     }
 
     const result = await performChecks();
+
+    log("CHECK_COMPLETED", {
+      liveNotified: result.liveNotified,
+      videoNotified: result.videoNotified,
+      checkedAt: result.checkedAt,
+    });
 
     return NextResponse.json({
       success: true,
@@ -88,6 +126,10 @@ export async function GET(request: NextRequest) {
       ...result,
     });
   } catch (error) {
+    log("ERROR", {
+      message: (error as Error).message,
+      stack: (error as Error).stack,
+    });
     console.error("Error in YouTube notification check:", error);
     return NextResponse.json(
       {

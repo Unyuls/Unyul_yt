@@ -2,6 +2,14 @@ import { loadLastChecked, saveLastChecked } from "./storage";
 import { checkLiveStreams, checkNewVideos } from "./youtube";
 import { LastChecked } from "./types";
 
+const log = (action: string, details: Record<string, unknown>) => {
+  const timestamp = new Date().toISOString();
+  console.log(
+    `[SERVICE ${timestamp}] ${action}:`,
+    JSON.stringify(details, null, 2),
+  );
+};
+
 export async function performChecks(): Promise<{
   liveNotified: boolean;
   videoNotified: boolean;
@@ -10,9 +18,15 @@ export async function performChecks(): Promise<{
   checkedAt: string;
 }> {
   const checkedAt = new Date().toISOString();
-  console.log(`[${checkedAt}] Starting YouTube notification check...`);
+  log("CHECK_START", { checkedAt });
 
   let lastChecked = await loadLastChecked();
+
+  log("LOADED_LAST_CHECKED", {
+    lastCheckedAt: lastChecked.lastCheckedAt,
+    lastVideoId: lastChecked.lastVideoId,
+    lastLiveId: lastChecked.lastLiveId,
+  });
 
   const liveResult = await checkLiveStreams(
     lastChecked.lastLiveId,
@@ -26,9 +40,17 @@ export async function performChecks(): Promise<{
     lastLiveStatus: liveResult.newStatus,
     lastCheckedAt: checkedAt,
   };
+
+  log("SAVING_NEW_CHECKED", {
+    newLastCheckedAt: newLastChecked.lastCheckedAt,
+    newVideoId: newLastChecked.lastVideoId,
+    newLiveId: newLastChecked.lastLiveId,
+  });
+
   await saveLastChecked(newLastChecked);
 
-  console.log(`[${checkedAt}] Check completed.`, {
+  log("CHECK_COMPLETED", {
+    checkedAt,
     liveNotified: liveResult.notified,
     videoNotified: videoResult.notified,
   });
