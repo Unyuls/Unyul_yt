@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { CONFIG } from "./config";
-import { loadLastChecked } from "./storage";
+import { loadLastChecked, saveLastChecked } from "./storage";
 import { sendDiscordEmbed } from "./discord";
 import { performChecks } from "./service";
 import { DiscordEmbed } from "./types";
@@ -34,6 +34,7 @@ export async function GET(request: NextRequest) {
         success: true,
         status: "active",
         lastChecked,
+        serverTime: new Date().toISOString(),
         config: {
           channelId: CONFIG.YOUTUBE_CHANNEL_ID,
           channelName: CONFIG.CHANNEL_NAME,
@@ -62,6 +63,13 @@ export async function GET(request: NextRequest) {
         `**Para** <@&${CONFIG.MENTION_ROLE_ID}>\n\nsorry yak, ini test notif`,
         testEmbed,
       );
+
+      // Update lastCheckedAt even for test notifications
+      const currentData = await loadLastChecked();
+      await saveLastChecked({
+        ...currentData,
+        lastCheckedAt: new Date().toISOString(),
+      });
 
       return NextResponse.json({
         success: sent,

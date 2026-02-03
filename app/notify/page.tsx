@@ -63,6 +63,20 @@ function NotifyContent() {
       setLastResult(data);
 
       if (data.success) {
+        // Immediately update the status with the new checkedAt time
+        if (data.checkedAt && status) {
+          setStatus({
+            ...status,
+            lastChecked: {
+              ...status.lastChecked,
+              lastVideoId: status.lastChecked?.lastVideoId || "",
+              lastLiveId: status.lastChecked?.lastLiveId || null,
+              lastLiveStatus: status.lastChecked?.lastLiveStatus || "none",
+              lastCheckedAt: data.checkedAt,
+            },
+          });
+        }
+
         if (data.liveNotified || data.videoNotified) {
           showNotification(
             "success",
